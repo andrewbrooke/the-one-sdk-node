@@ -1,5 +1,5 @@
 {
-  "name": "the-one-sdk-node",
+  "name": "the-one-sdk",
   "version": "0.0.1",
   "description": "NodeJS wrapper for the-one-api.dev",
   "main": "dist/cjs/index.js",
