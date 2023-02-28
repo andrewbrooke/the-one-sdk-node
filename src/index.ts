@@ -1,10 +1,19 @@
 import axios from 'axios';
 import _ from 'lodash';
 
-import { APIResponse, Movie, MovieQuote, PaginatedParameters, PaginatedResponse } from './types';
+import {
+  APIResponse,
+  Movie,
+  Quote,
+  Book,
+  Chapter,
+  Character,
+  PaginatedParameters,
+  PaginatedResponse,
+} from './types';
 import { handleAxiosError } from './helpers/error';
 
-export { Movie, MovieQuote, PaginatedParameters, PaginatedResponse };
+export { Movie, Quote, Book, Chapter, Character, PaginatedParameters, PaginatedResponse };
 
 export default class OneSDK {
   protected Axios;
@@ -21,22 +30,15 @@ export default class OneSDK {
     });
   }
 
-  /**
-   * Get a specific movie by its ID
-   *
-   * @async
-   * @param {string} id
-   * @returns {Promise<Movie>}
-   */
-  public getMovie = async (id: string): Promise<Movie> => {
+  private async handleSingleRequest<T>(path: string, id: string): Promise<T> {
     try {
-      const response: APIResponse<Movie> = await this.Axios.get(`/movie/${id}`);
+      const response: APIResponse<T> = await this.Axios.get(`${path}/${id}`);
 
       return response.docs[0];
     } catch (err) {
       throw handleAxiosError(err);
     }
-  };
+  }
 
   private async handlePaginatedRequest<T>(
     path: string,
@@ -72,6 +74,87 @@ export default class OneSDK {
   }
 
   /**
+   * Get a specific book by its ID
+   *
+   * @async
+   * @param {string} id
+   * @returns {Promise<Book>}
+   */
+  public getBook = async (id: string): Promise<Book> => {
+    return this.handleSingleRequest('/book', id);
+  };
+
+  /**
+   * Get a specific movie by its ID
+   *
+   * @async
+   * @param {string} id
+   * @returns {Promise<Movie>}
+   */
+  public getMovie = async (id: string): Promise<Movie> => {
+    return this.handleSingleRequest('/movie', id);
+  };
+
+  /**
+   * Get a specific character by its ID
+   *
+   * @async
+   * @param {string} id
+   * @returns {Promise<Character>}
+   */
+  public getCharacter = async (id: string): Promise<Character> => {
+    return this.handleSingleRequest('/character', id);
+  };
+
+  /**
+   * Get a specific quote by its ID
+   *
+   * @async
+   * @param {string} id
+   * @returns {Promise<Quote>}
+   */
+  public getQuote = async (id: string): Promise<Quote> => {
+    return this.handleSingleRequest('/quote', id);
+  };
+
+  /**
+   * Get a specific chapter by its ID
+   *
+   * @async
+   * @param {string} id
+   * @returns {Promise<Chapter>}
+   */
+  public getChapter = async (id: string): Promise<Chapter> => {
+    return this.handleSingleRequest('/chapter', id);
+  };
+
+  /**
+   * Get list of books from provided filtering parameters
+   *
+   * @async
+   * @param {?PaginatedParameters} params
+   * @returns {Promise<PaginatedResponse<Book>>}
+   */
+  public getBooks = async (params?: PaginatedParameters): Promise<PaginatedResponse<Book>> => {
+    return this.handlePaginatedRequest<Book>(`/book`, params);
+  };
+
+  /**
+   * Get list of book chapters by the book ID from provided filtering parameters
+   *
+   * @async
+   * @param {string} id
+   * @param {?PaginatedParameters} params
+   * @returns {Promise<PaginatedResponse<Chapter>>}
+   */
+  public getBookChapters = async (
+    id: string,
+    params?: PaginatedParameters
+  ): Promise<PaginatedResponse<Chapter>> => {
+    return this.handlePaginatedRequest<Chapter>(`/book/${id}/chapter`, params);
+  };
+
+  /**
    * Get list of movies from provided filtering parameters
    *
    * @async
@@ -88,12 +171,64 @@ export default class OneSDK {
    * @async
    * @param {string} id
    * @param {?PaginatedParameters} params
-   * @returns {Promise<PaginatedResponse<MovieQuote>>}
+   * @returns {Promise<PaginatedResponse<Quote>>}
    */
   public getMovieQuotes = async (
     id: string,
     params?: PaginatedParameters
-  ): Promise<PaginatedResponse<MovieQuote>> => {
-    return this.handlePaginatedRequest<MovieQuote>(`/movie/${id}/quote`, params);
+  ): Promise<PaginatedResponse<Quote>> => {
+    return this.handlePaginatedRequest<Quote>(`/movie/${id}/quote`, params);
+  };
+
+  /**
+   * Get list of characters from provided filtering parameters
+   *
+   * @async
+   * @param {?PaginatedParameters} params
+   * @returns {Promise<PaginatedResponse<Character>>}
+   */
+  public getCharacters = async (
+    params?: PaginatedParameters
+  ): Promise<PaginatedResponse<Character>> => {
+    return this.handlePaginatedRequest<Character>(`/character`, params);
+  };
+
+  /**
+   * Get list of character quotes by the character ID from provided filtering parameters
+   *
+   * @async
+   * @param {string} id
+   * @param {?PaginatedParameters} params
+   * @returns {Promise<PaginatedResponse<Quote>>}
+   */
+  public getCharacterQuotes = async (
+    id: string,
+    params?: PaginatedParameters
+  ): Promise<PaginatedResponse<Quote>> => {
+    return this.handlePaginatedRequest<Quote>(`/character/${id}/quote`, params);
+  };
+
+  /**
+   * Get list of quotes from provided filtering parameters
+   *
+   * @async
+   * @param {?PaginatedParameters} params
+   * @returns {Promise<PaginatedResponse<Quote>>}
+   */
+  public getQuotes = async (params?: PaginatedParameters): Promise<PaginatedResponse<Quote>> => {
+    return this.handlePaginatedRequest<Quote>(`/quote`, params);
+  };
+
+  /**
+   * Get list of chapters from provided filtering parameters
+   *
+   * @async
+   * @param {?PaginatedParameters} params
+   * @returns {Promise<PaginatedResponse<Chapter>>}
+   */
+  public getChapters = async (
+    params?: PaginatedParameters
+  ): Promise<PaginatedResponse<Chapter>> => {
+    return this.handlePaginatedRequest<Chapter>(`/chapter`, params);
   };
 }
