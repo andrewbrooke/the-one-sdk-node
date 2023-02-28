@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 export class OSNError extends Error {
-  constructor(msg?: string) {
-    super(msg || 'Uh oh, something went wrong');
+  constructor(msg: string) {
+    super(msg);
     Object.setPrototypeOf(this, OSNError.prototype);
   }
 }

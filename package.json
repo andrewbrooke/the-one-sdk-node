@@ -5,6 +5,25 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/types/index.d.js",
+  "scripts": {
+    "postinstall": "husky install",
+    "prepublishOnly": "pinst --disable",
+    "postpublish": "pinst --enable",
+    "build": "yarn run build:cjs && yarn run build:esm && yarn run build:types",
+    "build:cjs": "node tools/cleanup cjs && tsc -p config/tsconfig.cjs.json",
+    "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
+    "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
+    "clean": "node tools/cleanup",
+    "package": "yarn run build && yarn pack",
+    "lint": "prettier -c ./src/**.ts && eslint ./src/**.ts --ext .ts",
+    "test": "nyc mocha -r ts-node/register src/**/*.spec.ts --exit --colors"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "lord",
     "rings",
@@ -13,13 +32,6 @@
     "sdk",
     "typescript"
   ],
-  "scripts": {
-    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
-    "build:cjs": "node tools/cleanup cjs && tsc -p config/tsconfig.cjs.json",
-    "build:esm": "node tools/cleanup esm && tsc -p config/tsconfig.esm.json",
-    "build:types": "node tools/cleanup types && tsc -p config/tsconfig.types.json",
-    "lint": "prettier -c ./src/**.ts && eslint ./src/**.ts --ext .ts"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/andrewbrooke/the-one-sdk-node.git"
@@ -31,19 +43,27 @@
   },
   "homepage": "https://github.com/andrewbrooke/the-one-sdk-node#readme",
   "devDependencies": {
+    "@commitlint/cli": "^17.4.4",
+    "@commitlint/config-conventional": "^17.4.4",
     "@types/chai": "^4.3.4",
-    "@types/chai-spies": "^1.0.3",
+    "@types/chai-as-promised": "^7.1.5",
     "@types/lodash": "^4.14.191",
     "@types/mocha": "^10.0.1",
+    "@types/node": "^18.14.2",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.54.0",
     "chai": "^4.3.7",
-    "chai-spies": "^1.0.0",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.3",
     "mocha": "^10.2.0",
+    "nock": "^13.3.0",
+    "nyc": "^15.1.0",
+    "pinst": "^3.0.0",
     "prettier": "^2.8.4",
+    "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
   },
   "dependencies": {
